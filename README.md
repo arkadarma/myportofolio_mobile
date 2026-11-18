@@ -26,7 +26,7 @@ Saat ini, tombol aksi masih berupa interaksi sederhana. Fitur daftar proyek, pen
 
 Proyek ini menggunakan Flutter sebagai framework dan Dart sebagai bahasa pemrograman. Selain itu, terdapat beberapa dependency pendukung seperti flutter_test untuk pengujian widget dan flutter_lints untuk membantu menjaga kualitas kode.
 
-## Struktur Proyek
+## Struktur Proyek tugas 7
 
 ```text
 myportofolio_mobile/
@@ -97,7 +97,7 @@ Pemeriksaan kode dilakukan menggunakan `flutter analyze` dan menghasilkan `No is
 
 Pengujian menggunakan `flutter test` juga berhasil dengan dua widget test lulus. Pengujian mencakup informasi profil, warna kartu, dan interaksi tombol.
 
-Aplikasi sudah dicoba dijalankan pada  Chrome, tetapi tampilannya sudah seuai secara visual. 
+Aplikasi sudah dicoba dijalankan pada  Chrome dan tampilannya sudah seuai secara visual. 
 
 
 
@@ -189,8 +189,110 @@ Navigasi antarhalaman dan autentikasi juga dapat ditambahkan agar setiap tombol 
 
 Fitur-fitur tersebut masih berupa rencana dan belum tersedia dalam implementasi saat ini.
 
-## Lisensi
 
-Proyek ini dibuat untuk keperluan akademik mata kuliah Pemrograman Berbasis Platform di Fakultas Ilmu Komputer, Universitas Indonesia.
 
-Lisensi proyek belum ditentukan.
+
+---
+
+# Tugas 8 — Formulir Education dan Navigasi
+
+Pada Tugas 8, saya menambahkan halaman formulir Education ke aplikasi portofolio. Formulir ini digunakan untuk mengisi informasi pendidikan dan menampilkan ringkasan setelah semua input berhasil divalidasi.
+
+## Fitur yang Dibuat
+
+- Membuat halaman Education Form menggunakan `StatefulWidget`.
+- Menambahkan input nama institusi, jenjang, jurusan, tahun masuk, dan tahun lulus.
+- Menambahkan validasi pada setiap input.
+- Menambahkan pilihan status pendidikan masih berlangsung.
+- Menambahkan penghitung karakter deskripsi maksimal 400 karakter.
+- Menambahkan tombol Reset dengan konfirmasi.
+- Menampilkan ringkasan data menggunakan `AlertDialog`.
+- Menambahkan kartu Education pada halaman Home.
+- Menambahkan menu Add Education pada Drawer.
+- Menggunakan Drawer yang sama pada halaman terkait.
+
+Data pendidikan saat ini hanya ditampilkan melalui dialog dan belum disimpan secara permanen.
+
+## Cara Menggunakan Education Form
+
+1. Buka formulir melalui kartu Tambah Pendidikan pada Home atau menu Add Education pada Drawer.
+2. Isi informasi pendidikan yang diminta.
+3. Aktifkan pilihan pendidikan masih berlangsung apabila belum lulus.
+4. Isi tahun lulus apabila pendidikan sudah selesai.
+5. Tekan Simpan untuk melihat ringkasan data.
+6. Gunakan Reset untuk mengosongkan formulir setelah konfirmasi.
+
+## Pertanyaan Reflektif Tugas 8
+
+**1. Apa perbedaan Navigator.push(), Navigator.pushReplacement(), dan Navigator.pop()?**
+
+`Navigator.push()` digunakan untuk membuka halaman baru tanpa menghapus halaman sebelumnya. `Navigator.pushReplacement()` membuka halaman baru sekaligus menggantikan halaman yang sedang aktif. Sementara itu, `Navigator.pop()` digunakan untuk menutup halaman atau dialog yang sedang terbuka.
+
+Pada project ini, kartu Education menggunakan `Navigator.push()` untuk membuka formulir. Menu Home pada Drawer menggunakan `Navigator.pushAndRemoveUntil()` agar pengguna dapat kembali ke halaman utama tanpa menumpuk halaman sebelumnya.
+
+**2. Bagaimana Scaffold, AppBar, dan Drawer membantu menjaga konsistensi halaman?**
+
+`Scaffold` digunakan sebagai kerangka utama halaman, `AppBar` menampilkan bagian atas halaman, dan `Drawer` menyediakan menu navigasi. Project menggunakan komponen `LeftDrawer` yang sama pada halaman Home dan formulir. Warna indigo dari tema aplikasi juga digunakan pada beberapa halaman agar tampilannya tetap konsisten.
+
+**3. Mengapa tata letak tersebut dipilih untuk formulir?**
+
+Formulir menggunakan `SingleChildScrollView` agar pengguna tetap dapat mengakses seluruh input dan tombol ketika layar terbatas atau keyboard muncul.
+
+`SafeArea` menjaga konten dari area sistem, `Padding` memberikan jarak dari tepi layar, dan `SizedBox` mengatur jarak antarinput. Dengan susunan ini, formulir lebih nyaman digunakan pada berbagai ukuran layar.
+
+**4. Apa peran GlobalKey\<FormState>, validator, dan validate()?**
+
+`GlobalKey<FormState>` digunakan untuk mengakses state dari widget `Form`. Setiap `validator` memeriksa nilai input dan memberikan pesan kesalahan apabila data tidak sesuai aturan.
+
+Ketika tombol Simpan ditekan, `validate()` menjalankan seluruh validator. Contohnya, tahun masuk yang lebih besar daripada tahun lulus akan ditolak.
+
+Keyboard numerik saja tidak cukup karena tidak memastikan angka yang dimasukkan memiliki format dan rentang yang benar. Oleh karena itu, validasi tetap diperlukan.
+
+## Pengujian Tugas 8
+
+Pemeriksaan :
+
+- `flutter pub get` berhasil.
+- `dart format .` berhasil.
+- `flutter analyze` menghasilkan `No issues found!`.
+- Seluruh 16 test berhasil dijalankan.
+- Aplikasi diperiksa melalui Chrome pada ukuran normal dan 320 × 480 piksel.
+- Pengujian widget mencakup validasi, navigasi, dialog, reset, dan tampilan layar kecil.
+
+
+Untuk menjalankan pemeriksaan kembali:
+
+```bash
+dart format .
+flutter analyze
+flutter test
+```
+
+## Penggunaan AI dan Pemeriksaan Mandiri
+
+Dalam pengerjaan Tugas 8, saya menggunakan Codex sebagai alat bantu untuk memahami instruksi tugas, memeriksa struktur project, mengembangkan formulir Education, menambahkan validasi dan navigasi, serta membantu membuat pengujian.
+
+Hasil dari AI tetap perlu diperiksa karena AI dapat melakukan kesalahan dalam memahami struktur project atau aturan validasi. Selama proses pengerjaan, ditemukan masalah tampilan pada layar kecil dan posisi notifikasi yang menutupi bagian formulir. Perubahan untuk memperbaiki masalah tersebut dilakukan selama proses pengembangan dengan bantuan Codex.
+
+Hal yang masih perlu saya periksa sendiri:
+
+- [ ] Mencoba input kosong dan input yang hanya berisi spasi.
+- [ ] Memeriksa validasi tahun masuk dan tahun lulus.
+- [ ] Mencoba status pendidikan masih berlangsung.
+- [ ] Mencoba tombol Reset dan konfirmasinya.
+- [ ] Memastikan dialog menampilkan data yang benar.
+- [ ] Mencoba navigasi dari Home dan Drawer.
+- [ ] Memeriksa tampilan pada layar kecil atau perangkat fisik.
+- [ ] Membaca kembali kode agar memahami alur program.
+
+### Catatan Perbaikan Manual
+
+- **Bagian yang diperiksa:** education_form.dart dan education_form_validators.dart.
+- **Perubahan yang dilakukan:** Saya memeriksa kembali proses validasi formulir, terutama input kosong, spasi yang tidak diperlukan, dan urutan tahun masuk serta tahun lulus. Saya juga memastikan data dibersihkan sebelum ditampilkan pada ringkasan.
+- **Alasan:** Agar data yang dimasukkan lebih konsisten dan kesalahan input dapat dicegah sebelum ditampilkan.
+
+Setelah melakukan pemeriksaan, saya memastikan validasi berjalan sesuai aturan yang digunakan pada formulir Education.
+
+## Rencana Pengembangan
+
+Beberapa fitur yang masih dapat dikembangkan adalah penyimpanan data pendidikan, halaman daftar proyek, fitur edit proyek, dan autentikasi pengguna. Saat ini, data Education belum disimpan secara permanen.

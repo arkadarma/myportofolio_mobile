@@ -24,3 +24,38 @@ Catatan ini mendokumentasikan penggunaan AI yang terlihat pada sesi Codex untuk 
 ## Batasan catatan
 
 Log ini adalah ringkasan prompt dan tugas AI dari sesi yang tercatat, bukan ekspor/transkrip lengkap percakapan. Tidak ada tanggal atau output dari sesi AI lain yang tersedia untuk dicatat.
+
+## Individual Assignment 8 — 18 November 2026
+
+### Tools dan aktivitas
+
+- **OpenAI Codex pada aplikasi Codex desktop:** membaca instruksi tugas dan source yang tersedia, membuat perubahan kode, memperbarui test dan README, lalu meninjau hasil perintah QA.
+- **PDF utilities (`pypdf` dan `pdftoppm`):** mengekstrak seluruh teks PDF empat halaman dan merender halaman untuk membaca checklist, refleksi, pengumpulan, dan rubrik.
+- **Flutter/Dart CLI:** menjalankan `flutter pub get`, `dart format .`, `flutter analyze`, dan `flutter test` dari root project.
+
+Ringkasan prompt sesi ini: gunakan PDF Tugas 8 sebagai instruksi utama; inspeksi project sebelum mengubahnya; pertahankan implementasi Tugas 7 dan Tutorial 09; buat form Education modular dengan validasi, ringkasan, fitur interaksi, navigasi dan Drawer; perbarui README dan disclosure secara jujur; jalankan QA; serta jangan menjalankan perintah Git. Ini ringkasan prompt panjang yang diberikan, bukan transkrip verbatim.
+
+| Bagian | Bantuan Codex | Cara verifikasi |
+| --- | --- | --- |
+| Audit project dan PDF | Membaca seluruh empat halaman PDF serta file di `lib/`, `test/`, `pubspec.yaml`, README, dan log AI yang tersedia. | Checklist dibandingkan dengan struktur dan source yang ditemukan. Status penyelesaian Tutorial 09 oleh pemilik tidak ditebak. |
+| Form Education | Membuat `EducationFormPage`, model `EducationEntry`, validator murni, dan dialog ringkasan; menambahkan status berlangsung, reset terkonfirmasi, serta counter. | Widget test memeriksa nilai kosong/spasi, format dan batas tahun, urutan tahun, valid submit, status berlangsung, reset, dialog, dan counter. |
+| Navigasi dan layout | Memperluas Drawer reusable dan kartu Home; menambahkan akses ke form dari kartu dan Drawer; menyesuaikan layout Home untuk lebar sempit. | Widget test memeriksa route dari Home/Drawer, Home dari Education, Add Project, tombol Back, lebar 320 piksel, dan inset keyboard simulasi. |
+| Dokumentasi | Memperbarui README, mempertahankan refleksi Tugas 7, menambahkan refleksi Tugas 8 dan disclosure yang membedakan hasil otomatis dari pekerjaan manual. | Klaim dicocokkan dengan source dan hasil perintah yang benar-benar dijalankan. |
+
+### Strategi prompting dan evaluasi
+
+Instruksi pengguna menyediakan requirement terperinci sekaligus meminta audit awal, menjaga pola project, memberi fitur ekstra yang relevan, dan menguji sejumlah skenario. PDF digunakan sebagai sumber persyaratan akademik. Implementasi mengikuti struktur project yang ada; keputusan seperti rentang tahun valid 1900 sampai tahun kalender sekarang ditulis sebagai aturan aplikasi dan diberi catatan bahwa aturan tersebut dapat ditinjau.
+
+Hasil AI tidak selalu tepat pada percobaan pertama. Test awal memperlihatkan overflow kartu Home di layar sempit serta SnackBar dari aksi navigasi yang menutupi bagian bawah form; Codex mengubah kartu agar kontennya muat dan membersihkan SnackBar sebelum berpindah route. Iterasi test juga menemukan beberapa locator test yang tidak sesuai dengan key widget dinamis; locator diperbaiki sebelum suite penuh dinyatakan lulus. Ini perbaikan yang dilakukan Codex pada source/test, bukan perubahan manual yang dilakukan pemilik.
+
+### Hasil dan pekerjaan yang belum diverifikasi
+
+- `flutter pub get` selesai dengan sukses. Output menyebut ada empat package dengan versi lebih baru yang tidak dapat dipilih oleh batas dependency saat ini; dependency tidak di-upgrade.
+- `dart format .` selesai.
+- `flutter analyze` selesai dengan `No issues found!` dan `flutter test` melaporkan `All tests passed!` (16 test).
+- Responsiveness diuji sebagai widget test pada viewport 320 × 480 piksel, termasuk inset keyboard simulasi. Dialog juga diperiksa di viewport kecil.
+- Aplikasi dijalankan langsung di Chrome dan diperiksa pada viewport normal serta 320 × 480 piksel. Home, kartu aksi, form, pesan validasi, status pendidikan berlangsung, dialog, dan alur Home dari Drawer terlihat dan dapat digunakan; area form/dialog yang lebih panjang dapat digulir.
+- Aplikasi tidak dijalankan pada perangkat Android/iOS fisik. Pemeriksaan Chrome tidak membuktikan perilaku seluruh browser, keyboard native, atau perangkat.
+- Tidak ada perbaikan kode manual oleh pemilik yang dapat diverifikasi dari sesi ini. Pemilik masih perlu meninjau kode/hasil visual, memastikan Tutorial 09 sebagai prasyarat, dan menyelesaikan seluruh proses Git dan submit sendiri.
+
+Risiko yang perlu ditinjau manusia meliputi pilihan rentang tahun sesuai konteks profil, ekspektasi navigasi saat Drawer dibuka dari route lain, dan kecocokan visual pada perangkat fisik. Test widget dan inspeksi Chrome mengurangi risiko regresi, tetapi tidak membuktikan seluruh penggunaan nyata atau persistensi; data form saat ini hanya dipakai untuk ringkasan dan tidak disimpan permanen. Tidak ada perintah Git yang dijalankan.
