@@ -9,10 +9,12 @@ class LeftDrawer extends StatelessWidget {
     super.key,
     required this.homePageBuilder,
     required this.projectFormPageBuilder,
+    required this.educationFormPageBuilder,
   });
 
   final WidgetBuilder homePageBuilder;
   final WidgetBuilder projectFormPageBuilder;
+  final WidgetBuilder educationFormPageBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +57,12 @@ class LeftDrawer extends StatelessWidget {
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pushReplacement(
+              // The drawer can be opened from routes pushed by action cards.
+              // Rebuild one home route so Home never leaves stale forms stacked.
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: homePageBuilder),
+                (route) => false,
               );
             },
           ),
@@ -65,14 +70,22 @@ class LeftDrawer extends StatelessWidget {
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
             onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: projectFormPageBuilder),
-              );
+              _replaceCurrentPage(context, projectFormPageBuilder);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.school_outlined),
+            title: const Text('Add Education'),
+            onTap: () {
+              _replaceCurrentPage(context, educationFormPageBuilder);
             },
           ),
         ],
       ),
     );
+  }
+
+  void _replaceCurrentPage(BuildContext context, WidgetBuilder builder) {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: builder));
   }
 }

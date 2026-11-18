@@ -9,9 +9,34 @@ class MyHomePage extends StatelessWidget {
   final LeftDrawer drawer;
 
   static const List<ItemHomepage> items = [
-    ItemHomepage('Lihat Portofolio', Icons.folder_open, Colors.indigo),
-    ItemHomepage('Tambah Proyek', Icons.add_circle, Colors.teal),
-    ItemHomepage('Logout', Icons.logout, Colors.deepOrange),
+    ItemHomepage(
+      name: 'Lihat Portofolio',
+      description: 'Jelajahi ringkasan profil dan karya.',
+      icon: Icons.folder_open,
+      color: Colors.indigo,
+      action: HomepageAction.portfolio,
+    ),
+    ItemHomepage(
+      name: 'Tambah Proyek',
+      description: 'Catat proyek baru ke portofolio.',
+      icon: Icons.add_circle_outline,
+      color: Colors.teal,
+      action: HomepageAction.addProject,
+    ),
+    ItemHomepage(
+      name: 'Tambah Pendidikan',
+      description: 'Tambahkan riwayat pendidikan.',
+      icon: Icons.school_outlined,
+      color: Colors.deepPurple,
+      action: HomepageAction.addEducation,
+    ),
+    ItemHomepage(
+      name: 'Logout',
+      description: 'Aksi contoh untuk interaksi.',
+      icon: Icons.logout,
+      color: Colors.deepOrange,
+      action: HomepageAction.logout,
+    ),
   ];
 
   @override
@@ -28,56 +53,106 @@ class MyHomePage extends StatelessWidget {
       drawer: drawer,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Profil Pemilik',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-            const Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth < 520;
+            final crossAxisCount = constraints.maxWidth >= 900
+                ? 4
+                : constraints.maxWidth >= 600
+                ? 3
+                : 2;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: InfoCard(title: 'NPM', content: '2506656791'),
+                Text(
+                  'Profil Pemilik',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                Expanded(
-                  child: InfoCard(
-                    title: 'Name',
-                    content: 'I Komang Arka Darma Laksana',
+                const SizedBox(height: 12),
+                if (compact)
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      InfoCard(title: 'NPM', content: '2506656791'),
+                      InfoCard(
+                        title: 'Name',
+                        content: 'I Komang Arka Darma Laksana',
+                      ),
+                      InfoCard(title: 'Class', content: 'PBP D'),
+                    ],
+                  )
+                else
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: InfoCard(title: 'NPM', content: '2506656791'),
+                      ),
+                      Expanded(
+                        child: InfoCard(
+                          title: 'Name',
+                          content: 'I Komang Arka Darma Laksana',
+                        ),
+                      ),
+                      Expanded(
+                        child: InfoCard(title: 'Class', content: 'PBP D'),
+                      ),
+                    ],
                   ),
+                const SizedBox(height: 28),
+                Text(
+                  'Aksi Portofolio',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                Expanded(
-                  child: InfoCard(title: 'Class', content: 'PBP D'),
+                const SizedBox(height: 4),
+                Text(
+                  'Pilih salah satu menu untuk melanjutkan.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                GridView.count(
+                  primary: false,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  crossAxisCount: crossAxisCount,
+                  mainAxisExtent: 158,
+                  shrinkWrap: true,
+                  children: items
+                      .map(
+                        (item) => ItemCard(
+                          item,
+                          onTap: () => _handleAction(context, item.action),
+                        ),
+                      )
+                      .toList(),
                 ),
               ],
-            ),
-            const SizedBox(height: 28),
-            Text(
-              'Aksi Portofolio',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Pilih salah satu menu untuk melanjutkan.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            GridView.count(
-              primary: false,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              crossAxisCount: 3,
-              childAspectRatio: 0.95,
-              shrinkWrap: true,
-              children: items
-                  .map((item) => ItemCard(item, drawer: drawer))
-                  .toList(),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
+  }
+
+  void _handleAction(BuildContext context, HomepageAction action) {
+    final item = items.firstWhere((item) => item.action == action);
+    final WidgetBuilder? pageBuilder = switch (action) {
+      HomepageAction.addProject => drawer.projectFormPageBuilder,
+      HomepageAction.addEducation => drawer.educationFormPageBuilder,
+      HomepageAction.portfolio || HomepageAction.logout => null,
+    };
+
+    if (pageBuilder != null) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      Navigator.push(context, MaterialPageRoute(builder: pageBuilder));
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text('Kamu telah menekan tombol ${item.name}!')),
+      );
   }
 }
 

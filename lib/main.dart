@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
@@ -18,6 +19,7 @@ class _MyAppState extends State<MyApp> {
   late final LeftDrawer _drawer = LeftDrawer(
     homePageBuilder: (_) => MyHomePage(drawer: _drawer),
     projectFormPageBuilder: (_) => ProjectFormPage(drawer: _drawer),
+    educationFormPageBuilder: (_) => EducationFormPage(drawer: _drawer),
   );
 
   @override
