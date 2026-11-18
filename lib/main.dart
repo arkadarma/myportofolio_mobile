@@ -1,12 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:myportofolio_mobile/menu.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final LeftDrawer _drawer = LeftDrawer(
+    homePageBuilder: (_) => MyHomePage(drawer: _drawer),
+    projectFormPageBuilder: (_) => ProjectFormPage(drawer: _drawer),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +31,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(drawer: _drawer),
     );
   }
 }
