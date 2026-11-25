@@ -1,24 +1,29 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
-/// Navigation drawer shared by the home and project form screens.
-///
-/// Page builders are supplied by the app root so this widget does not need
-/// to import either screen and create a circular dependency.
+/// Navigation drawer shared by the portfolio screens.
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({
     super.key,
     required this.homePageBuilder,
+    required this.projectListPageBuilder,
     required this.projectFormPageBuilder,
     required this.educationFormPageBuilder,
   });
 
   final WidgetBuilder homePageBuilder;
+  final WidgetBuilder projectListPageBuilder;
   final WidgetBuilder projectFormPageBuilder;
   final WidgetBuilder educationFormPageBuilder;
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
+    final pageContext = Scaffold.of(context).context;
     return Drawer(
+      semanticLabel: 'My Portfolio navigation',
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -56,28 +61,62 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
+            onTap: () => _openHome(context),
+          ),
+          ListTile(
+            leading: const Icon(Icons.folder_open_outlined),
+            title: const Text('Projects'),
             onTap: () {
-              // The drawer can be opened from routes pushed by action cards.
-              // Rebuild one home route so Home never leaves stale forms stacked.
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: homePageBuilder),
-                (route) => false,
+              Navigator.pop(context);
+              Navigator.push(
+                pageContext,
+                MaterialPageRoute(builder: projectListPageBuilder),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
-            onTap: () {
-              _replaceCurrentPage(context, projectFormPageBuilder);
+            onTap: () async {
+              Navigator.pop(context);
+              if (!await ensureLoggedIn(pageContext) || !pageContext.mounted) {
+                return;
+              }
+              Navigator.push(
+                pageContext,
+                MaterialPageRoute(builder: projectFormPageBuilder),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.school_outlined),
             title: const Text('Add Education'),
             onTap: () {
-              _replaceCurrentPage(context, educationFormPageBuilder);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: educationFormPageBuilder),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(isLoggedIn ? Icons.logout : Icons.login),
+            title: Text(isLoggedIn ? 'Logout' : 'Login'),
+            onTap: () async {
+              final auth = context.read<AuthState>();
+              Navigator.pop(context);
+              if (!isLoggedIn) {
+                await ensureLoggedIn(pageContext);
+                return;
+              }
+
+              await auth.logout();
+              if (!pageContext.mounted) return;
+              _openHome(pageContext);
+              ScaffoldMessenger.of(pageContext)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Anda telah logout.')),
+                );
             },
           ),
         ],
@@ -85,7 +124,11 @@ class LeftDrawer extends StatelessWidget {
     );
   }
 
-  void _replaceCurrentPage(BuildContext context, WidgetBuilder builder) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: builder));
+  void _openHome(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: homePageBuilder),
+      (route) => false,
+    );
   }
 }

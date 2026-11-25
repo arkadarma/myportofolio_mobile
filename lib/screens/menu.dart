@@ -32,7 +32,7 @@ class MyHomePage extends StatelessWidget {
     ),
     ItemHomepage(
       name: 'Logout',
-      description: 'Aksi contoh untuk interaksi.',
+      description: 'Akhiri sesi portofolio.',
       icon: Icons.logout,
       color: Colors.deepOrange,
       action: HomepageAction.logout,
@@ -121,7 +121,7 @@ class MyHomePage extends StatelessWidget {
                       .map(
                         (item) => ItemCard(
                           item,
-                          onTap: () => _handleAction(context, item.action),
+                          onTap: () => _openPage(context, item.action),
                         ),
                       )
                       .toList(),
@@ -134,25 +134,17 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  void _handleAction(BuildContext context, HomepageAction action) {
-    final item = items.firstWhere((item) => item.action == action);
+  void _openPage(BuildContext context, HomepageAction action) {
     final WidgetBuilder? pageBuilder = switch (action) {
       HomepageAction.addProject => drawer.projectFormPageBuilder,
       HomepageAction.addEducation => drawer.educationFormPageBuilder,
-      HomepageAction.portfolio || HomepageAction.logout => null,
+      HomepageAction.portfolio => drawer.projectListPageBuilder,
+      HomepageAction.logout => null,
     };
-
     if (pageBuilder != null) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       Navigator.push(context, MaterialPageRoute(builder: pageBuilder));
-      return;
     }
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text('Kamu telah menekan tombol ${item.name}!')),
-      );
   }
 }
 
